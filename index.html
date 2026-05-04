@@ -7,6 +7,9 @@
     <title>Nicolaus Cusanus Gymnasium Bergisch Gladbach</title>
     <link rel="stylesheet" href="css/mainStyle.css">
     <link rel="stylesheet" href="css/style-landingPage.css">
+    <link rel="stylesheet" href="css/ArticleStyleSheetSection.css">
+    <script src="ts/mainScriptLandingPage.js" defer></script>
+    <script src="ts/Articles.js" defer></script>
 </head>
 
 <body>
@@ -28,6 +31,8 @@
             <div class="submenu">
                 <a href="#">Schulleitung</a>
                 <a href="#">Geschichte</a>
+                <a href="#">Kollegium</a>
+                <a href="#">Alle Artikel</a>
             </div>
         </div>
 
@@ -72,89 +77,12 @@
         </div>
         <button class="arrow prev" id="prevBtn">❮</button>
         <button class="arrow next" id="nextBtn">❯</button>
-         <div class="dots" id="dots"></div>
+        <div class="dots" id="dots"></div>
 
     </div>
+    <h1 class="SectionHeaderArticles">Neueste Artikel</h1>
+    <section class="articles" id="articlesContainer"></section>
 
 </body>
-<script>
-    const menuButton = document.getElementById("MenuButton");
-    const sideMenu = document.getElementById("sideMenu");
-    const overlay = document.getElementById("overlay");
-
-    function toggleMenu() {
-        menuButton.classList.toggle("active");
-        sideMenu.classList.toggle("active");
-        overlay.classList.toggle("active");
-    }
-
-    menuButton.addEventListener("click", toggleMenu);
-    overlay.addEventListener("click", toggleMenu);
-
-    document.querySelectorAll(".menuCategory").forEach(btn => {
-        btn.addEventListener("click", () => {
-            btn.parentElement.classList.toggle("open");
-        });
-    });
-
-    function showSlide(index) {
-        const slides = document.querySelectorAll(".slide");
-        slides.forEach((slide, i) => {
-            slide.classList.toggle("active", i === index);
-        });
-    }
-
-    let currentSlide = 0;
-    setInterval(() => {
-        currentSlide = (currentSlide + 1) % document.querySelectorAll(".slide").length;
-        showSlide(currentSlide);
-    }, 5000);
-
-
-
-</script>
-<script>
-const slides = document.querySelectorAll(".slide");
-const dotsContainer = document.getElementById("dots");
-
-let currentIndex = 0;
-
-// create dots
-slides.forEach((_, i) => {
-  const dot = document.createElement("div");
-  dot.classList.add("dot");
-
-  dot.addEventListener("click", () => {
-    currentIndex = i;
-    updateSlider();
-  });
-
-  dotsContainer.appendChild(dot);
-});
-
-const dots = document.querySelectorAll(".dot");
-
-function updateSlider() {
-  slides.forEach(s => s.classList.remove("active"));
-  dots.forEach(d => d.classList.remove("active"));
-
-  slides[currentIndex].classList.add("active");
-  dots[currentIndex].classList.add("active");
-}
-
-// arrows
-document.getElementById("nextBtn").addEventListener("click", () => {
-  currentIndex = (currentIndex + 1) % slides.length;
-  updateSlider();
-});
-
-document.getElementById("prevBtn").addEventListener("click", () => {
-  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-  updateSlider();
-});
-
-// init
-updateSlider();
-</script>
 
 </html>
