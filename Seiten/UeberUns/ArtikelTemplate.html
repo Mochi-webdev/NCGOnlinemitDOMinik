@@ -1,32 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nicolaus Cusanus Gymnasium Bergisch Gladbach</title>
-    <link rel="stylesheet" href="css/mainStyle.css">
-    <link rel="stylesheet" href="css/style-landingPage.css">
-    <link rel="stylesheet" href="css/ArticleStyleSheetSection.css">
-    <script src="ts/mainScriptLandingPage.js" defer></script>
-    <script src="ts/Articles.js" defer></script>
-    <script src="ts/menu.js" defer></script>
+    <title>NCG-BGL | Artikel</title>
+
+    <link rel="stylesheet" href="../../css/mainStyle.css">
+    <link rel="stylesheet" href="../../css/ArticleStyleSheetSection.css">
+    <link rel="stylesheet" href="../../css/ArticlePageStyleSheet.css">
+
+    <script src="../../ts/articlePage.js" defer></script>
+    
+    <script src="../../ts/menu.js" defer></script>
 </head>
 
 <body>
-    <header>
-        <img class="NCGLogo" src="assets/NCG_Logo.webp">
 
-        <button class="MenuButton" id="MenuButton">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
-    </header>
-
-    <div class="overlay" id="overlay"></div>
-
-    <nav class="sideMenu" id="sideMenu">
+<header>
+    <img class="NCGLogo" src="../../assets/NCG_Logo.webp">
+    <button class="MenuButton" id="MenuButton">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+</header>
+<div class="overlay" id="overlay"></div>
+<nav class="sideMenu" id="sideMenu">
         <div class="menuItem">
             <button class="menuCategory">Über uns</button>
             <div class="submenu">
@@ -68,22 +67,19 @@
     </nav>
 
 
-    <div class="slideshow">
-        <div class="slide active">
-            <img src="assets/Slide1.jpg" alt="Slide 1">
-        </div>
-        <div class="slide">
-            <img src="assets/Slide2.jpg" alt="Slide 2">
+<div class="progress-bar" id="progressBar"></div>
 
-        </div>
-        <button class="arrow prev" id="prevBtn">❮</button>
-        <button class="arrow next" id="nextBtn">❯</button>
-        <div class="dots" id="dots"></div>
+<main class="articlePage">
 
-    </div>
-    <h1 class="SectionHeaderArticles">Neueste Artikel</h1>
-    <section class="articles" id="articlesContainer"></section>
+    <img id="articleImage" class="articleHero">
+
+    <h1 id="articleTitle"></h1>
+
+    <p id="articleDate"></p>
+
+    <div id="articleContent"></div>
+
+</main>
 
 </body>
-
 </html>
