@@ -32,6 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
             title: "„Was einmal passiert ist, kann sich wiederholen.“  - Gedenkstättenfahrt des NCG nach Oświęcim und Krakau ",
             id: "auschwitzfahrt",
             image: "../../assets/AuschwitzfahrtTitelbild.jpg",
+            photos: [
+                "../../assets/Auschwitzfahrt1.jpg",
+                "../../assets/Auschwitzfahrt2.jpg",
+                "../../assets/Auschwitzfahrt3.jpg",
+                "../../assets/Auschwitzfahrt4.jpg",
+                "../../assets/Auschwitzfahrt5.jpg",
+            ],
             text: `Im Rahmen des in diesem Jahr erstmalig stattfindenden Projektkurses Deutsch-Geschichte „Gegen das Vergessen“, welcher sich seit den Sommerferien mit Antisemitismus und dem Holocaust beschäftigt, fuhren wir vom 21. bis zum 26. März nach Polen. 
 In unserem Projektkurs hatten wir uns zuvor intensiv mit der NS-Zeit beschäftigt. Dabei beleuchteten wir sowohl die Perspektive der Opfer als auch die der Täter*innen. Individuell beschäftigten wir uns mehrere Monate mit persönlich ausgewählten Biographien von Auschwitz-Überlebenden.  
 Am Samstag, den 21. März, machten wir uns um 05:30 Uhr auf den 15-stündigen Weg nach Oświecim. Ausgelaugt kamen wir am Samstagabend an und wurden direkt von unseren beiden Teamerinnen Katja und Bibi auf die folgenden Tage eingestimmt.  
@@ -62,9 +69,49 @@ Wir möchten uns herzlich bei allen bedanken, die diese Fahrt ermöglicht haben.
     document.getElementById("articleImage").src = article.image;
     document.getElementById("articleDate").textContent = article.date;
 
-   
+
     document.getElementById("articleContent").innerHTML =
         `<p>${article.text.replace(/\n/g, "</p><p>")}</p>`;
+
+    const photoGrid = document.getElementById("photoGrid");
+
+    if (article.photos && article.photos.length > 0) {
+        photoGrid.innerHTML = article.photos.map(src => `
+        <img src="${src}" class="article-photo" />
+    `).join("");
+    }
+
+    photoGrid.innerHTML = article.photos.map((src, index) => `
+    <img 
+        src="${src}" 
+        class="article-photo"
+        onclick="openPhotoViewer(article.photos, ${index})"
+    />
+`).join("");
+
+    function openPhotoViewer(images, startIndex) {
+        let current = startIndex;
+
+        const viewer = document.getElementById("viewer");
+        const viewerImg = document.getElementById("viewerImg");
+
+        function update() {
+            viewerImg.src = images[current];
+            viewer.style.display = "flex";
+        }
+
+        window.nextImage = () => {
+            current = (current + 1) % images.length;
+            update();
+        };
+
+        window.prevImage = () => {
+            current = (current - 1 + images.length) % images.length;
+            update();
+        };
+
+        update();
+    }
 });
 
 window.addEventListener("scroll", () => {

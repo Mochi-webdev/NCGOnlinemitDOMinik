@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,22 +11,22 @@
     <link rel="stylesheet" href="../../css/ArticlePageStyleSheet.css">
 
     <script src="../../ts/articlePage.js" defer></script>
-    
+
     <script src="../../ts/menu.js" defer></script>
 </head>
 
 <body>
 
-<header>
-    <img class="NCGLogo" src="../../assets/NCG_Logo.webp">
-    <button class="MenuButton" id="MenuButton">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-    </button>
-</header>
-<div class="overlay" id="overlay"></div>
-<nav class="sideMenu" id="sideMenu">
+    <header>
+        <img class="NCGLogo" src="../../assets/NCG_Logo.webp">
+        <button class="MenuButton" id="MenuButton">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </header>
+    <div class="overlay" id="overlay"></div>
+    <nav class="sideMenu" id="sideMenu">
         <div class="menuItem">
             <button class="menuCategory">Über uns</button>
             <div class="submenu">
@@ -67,19 +68,25 @@
     </nav>
 
 
-<div class="progress-bar" id="progressBar"></div>
+    <div class="progress-bar" id="progressBar"></div>
 
-<main class="articlePage">
+    <main class="articlePage">
 
-    <img id="articleImage" class="articleHero">
+        <img id="articleImage" class="articleHero">
 
-    <h1 id="articleTitle"></h1>
+        <h1 id="articleTitle"></h1>
 
-    <p id="articleDate"></p>
+        <p id="articleDate"></p>
 
-    <div id="articleContent"></div>
+        <div id="articleContent"></div>
 
-</main>
+        <div id="photoSection">
+            <h2>Mehr Bilder</h2>
+            <div id="photoGrid"></div>
+        </div>
+
+    </main>
 
 </body>
+
 </html>
