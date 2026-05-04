@@ -158,8 +158,14 @@ header {
         padding: 10px;
     }
 
+ 
+}
+@media (max-width: 600px) {
     .sideMenu {
-        width: 80%;
-        right: -80%;
+        border-radius: 0;
+    }
+
+    .menuCategory {
+        font-size: 18px;
     }
 }
