@@ -104,3 +104,26 @@
     font-size: 28px;
     color: var(--primary-color);
 }
+
+.page-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+.articles {
+    order: 1;
+   
+}
+.sidebar {
+  order: 2;
+    flex: 1;
+    align-self: flex-start;
+    max-width: 500px;
+}
+
+
+@media (max-width: 768px) {
+    .page-layout {
+        flex-direction: column;
+    }
+}
