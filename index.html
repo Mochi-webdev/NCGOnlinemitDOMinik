@@ -5,70 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nicolaus Cusanus Gymnasium Bergisch Gladbach</title>
+
     <link rel="stylesheet" href="css/mainStyle.css">
     <link rel="stylesheet" href="css/style-landingPage.css">
     <link rel="stylesheet" href="css/ArticleStyleSheetSection.css">
+    <link rel="stylesheet" href="css/KulturFooter.css">
+    <link rel="stylesheet" href="css/DabeiFooter.css">
+    <link rel="stylesheet" href="css/LinksSidebar.css">
+
     <script src="ts/mainScriptLandingPage.js" defer></script>
     <script src="ts/Articles.js" defer></script>
     <script src="ts/menu.js" defer></script>
-   
+    <script src="ts/footers.js" defer></script>
 </head>
 
 <body>
-    <header>
-        <img class="NCGLogo" id="NCGLogo" src="assets/NCG_Logo.webp">
-
-        <button class="MenuButton" id="MenuButton">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
-    </header>
-
-    <div class="overlay" id="overlay"></div>
-
-    <nav class="sideMenu" id="sideMenu">
-        <div class="menuItem">
-            <button class="menuCategory">Über uns</button>
-            <div class="submenu">
-                <a href="#">Schulleitung</a>
-                <a href="#">Geschichte</a>
-                <a href="#">Kollegium</a>
-                <a href="#">Alle Artikel</a>
-            </div>
-        </div>
-
-        <div class="menuItem">
-            <button class="menuCategory">Unsere Ideen</button>
-            <div class="submenu">
-                <a href="#">Leitbild</a>
-                <a href="#">Projekte</a>
-            </div>
-        </div>
-
-        <div class="menuItem">
-            <button class="menuCategory">Unterricht</button>
-            <div class="submenu">
-                <a href="#">Fächer</a>
-            </div>
-        </div>
-
-        <div class="menuItem">
-            <button class="menuCategory">Angebote</button>
-            <div class="submenu">
-                <a href="#">AGs</a>
-            </div>
-        </div>
-
-        <div class="menuItem">
-            <button class="menuCategory">Service</button>
-            <div class="submenu">
-                <a href="#">Kontakt</a>
-                <a href="Seiten/Service/Terminplan.html">Terminplan</a>
-            </div>
-        </div>
-    </nav>
-
 
     <div class="slideshow">
         <div class="slide active">
@@ -76,26 +27,54 @@
         </div>
         <div class="slide">
             <img src="assets/Slide2.jpg" alt="Slide 2">
-
         </div>
         <button class="arrow prev" id="prevBtn">❮</button>
         <button class="arrow next" id="nextBtn">❯</button>
         <div class="dots" id="dots"></div>
-
     </div>
+
     <h1 class="SectionHeaderArticles">Neueste Artikel</h1>
 
-    <div class="page-layout"
-    <section class="articles" id="articlesContainer"></section>
-      <aside class="sidebar">
-        <h3>Wichtige Links</h3>
-        <ul>
-            <li><a href="#">Startseite</a></li>
-            <li><a href="#">Alle Artikel</a></li>
-            <li><a href="#">Kontakt</a></li>
-        </ul>
-    </aside>
+    <div class="page-layout">
+        <section class="articles" id="articlesContainer"></section>
 
+        <aside class="sidebar">
+            <h3>Aktuell</h3>
+            <ul class="ListMain">
+                <li><a class="LinkText" href="/Seiten/WichtigeLinks/Schutzkonzept.html">Schutzkonzepte</a></li>
+                <li><a class="LinkText" href="/files/Newsletter_NCG_26_2.pdf" target="_blank">2. Newsletter 2025/2026</a></li>
+                <li><a class="LinkText" href="/files/Konzept_Vertretungsstunden_.pdf" target="_blank">Ergänzung Vertretungskonzept</a></li>
+                <li><a class="LinkText" href="https://in-gl.de/2026/02/11/sanierung-des-ncg-geht-in-die-4-verlaengerung-nicolaus-cusanus-gymnasium-bergisch-gladbach/">Stand der Sanierung</a></li>
+            </ul>
+
+            <h3>Orientierungshilfen</h3>
+            <ul class="ListMain">
+                <li><a class="LinkText" href="/files/checkliste.pdf" target="_blank">Checkliste: "Fit fürs Gymnasium"</a></li>
+                <li><a class="LinkText"
+                        href="https://in-gl.de/2023/11/30/worauf-eltern-bei-der-schulwahl-wirklich-achten-sollten/">Artikel:
+                        "Was bei der Wahl der weiterführenden Schule wichtig ist"</a></li>
+            </ul>
+
+            <h3>Allgemeines</h3>
+            <ul class="ListMain">
+                <li><a class="LinkText" href="#">Vertretungsplan</a></li>
+                <li><a class="LinkText"
+                        href="https://100pro-schulverpflegungplus.de/NCG/Vorbesteller/Default.aspx">Essensbestellung</a>
+                </li>
+                <li><a class="LinkText" href="#">Kalender</a></li>
+                <li><a class="LinkText" href="/files/Eigenanteil-Info.pdf" target="_blank">Eigenanteil Lernmittel</a></li>
+            </ul>
+        </aside>
+    </div>
+
+    <div class="KulturFooter">
+        <div class="footer-content">
+            <h2>Kultur am NCG</h2>
+            <p>Entdecke unsere Projekte, Veranstaltungen und kreativen Angebote.</p>
+            <a href="#" class="footer-btn">Mehr erfahren</a>
+        </div>
+    </div>
+<div id="footer-container"></div>
 </body>
 
 </html>

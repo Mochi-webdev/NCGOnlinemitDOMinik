@@ -1,0 +1,10 @@
+.LinkText {
+    font-size: 18px;
+    color:rgb(199, 27, 27);
+    text-decoration: none;
+    margin-bottom: 10px;
+    display: block;
+}
+.LinkText:hover {
+    text-decoration: underline;
+}
