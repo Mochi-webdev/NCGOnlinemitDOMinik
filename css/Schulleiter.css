@@ -1,0 +1,43 @@
+.Titel {
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+.BildVonSchulleitung {
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+    max-width: 100%;
+    height: 600px;
+    
+ 
+}
+.Text {
+  max-width: 680px;   
+  width: 100%;
+
+  margin: 40px auto;         
+  padding: 0 20px;
+
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #333;
+
+  text-align: left;
+}
+.Text p {
+  margin-bottom: 1.2em;
+}
+
+@media (max-width: 768px) {
+  .Text {
+    margin: 20px auto;
+    padding: 0 15px;
+    font-size: 1rem;
+  }
+  .BildVonSchulleitung {
+    height: auto;
+  }
+}
