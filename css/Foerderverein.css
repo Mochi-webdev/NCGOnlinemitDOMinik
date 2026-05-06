@@ -1,0 +1,20 @@
+.ButtonBox {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 15px 0;
+}
+
+.Button {
+    padding: 10px 14px;
+    background: #1f6feb;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.Button:hover {
+    background: #0f4dc2;
+    transform: translateY(-2px);
+}
