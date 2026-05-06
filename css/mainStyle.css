@@ -25,6 +25,9 @@ header {
     padding: 10px 16px;
 }
 
+.NCGLogo {
+    cursor: pointer;
+}
 
 .MenuButton {
     width: 34px;
