@@ -42,6 +42,8 @@ header {
     flex-direction: column;
     justify-content: space-between;
 
+    position: relative;
+
     z-index: 1002;
 }
 
@@ -83,7 +85,7 @@ header {
 
     transition: 0.3s ease;
 
-    z-index: 998;
+    z-index: 1000;
 }
 
 .overlay.active {
@@ -106,7 +108,7 @@ header {
     transform: translateX(100%);
     transition: transform 0.3s ease;
 
-    z-index: 999;
+    z-index: 1001;
 }
 
 .sideMenu.active {
