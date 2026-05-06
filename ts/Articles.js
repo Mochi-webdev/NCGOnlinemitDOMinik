@@ -104,27 +104,53 @@ function renderSingleArticle(data) {
 }
 
 async function createArticle() {
+   
     const current = await loadArticlesData();
-    const newId = "news-" + Date.now();
-    
+
+   
+    const titleVal = document.getElementById("titleInput").value.trim();
+    const idVal = document.getElementById("idInput").value.trim();
+    const imageVal = document.getElementById("imageInput").value.trim();
+    const dateVal = document.getElementById("dateInput").value.trim();
+    const textVal = document.getElementById("textInput").value.trim();
+
+   
+    if (!titleVal || !idVal) {
+        alert("Bitte mindestens Titel und ID eingeben!");
+        return;
+    }
+
+  
     const newArticle = {
-        title: "Klicken zum Bearbeiten des Titels",
-        id: newId,
-        image: "../../assets/default.jpg",
-        text: "Klicken zum Bearbeiten des Inhalts...",
-        date: new Date().toLocaleDateString("de-DE"),
+        title: titleVal,
+        id: idVal,
+        image: imageVal || "../../assets/default.jpg", 
+        text: textVal || "Inhalt hier eingeben...",
+        date: dateVal || new Date().toLocaleDateString("de-DE"),
         photos: []
     };
+
+  
+    if (current.some(a => a.id === idVal)) {
+        alert("Diese ID existiert bereits! Bitte wähle eine andere.");
+        return;
+    }
+
 
     current.push(newArticle);
     localStorage.setItem("articles", JSON.stringify(current));
     
-    const isInsideSubfolder = window.location.pathname.includes('Seiten');
-    const redirectPath = isInsideSubfolder ? 'UeberUns/artikelTemplate.html' : 'Seiten/UeberUns/artikelTemplate.html';
-    
-    window.location.href = `${redirectPath}?id=${newId}${ADMIN_HASH}`;
-}
+    alert("Artikel erfolgreich erstellt!");
 
+    document.getElementById("titleInput").value = "";
+    document.getElementById("idInput").value = "";
+    document.getElementById("imageInput").value = "";
+    document.getElementById("dateInput").value = "";
+    document.getElementById("textInput").value = "";
+
+    
+    renderArticleList(current);
+}
 function initAdminMode(data) {
     const adminBar = document.getElementById("adminBar");
     const editBtn = document.getElementById("editBtn");
