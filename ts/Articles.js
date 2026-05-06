@@ -1,54 +1,184 @@
-const articles = [
-    {
-        title: "Schneegestöber statt Schulbank drücken",
-        id: "ski2026",
-        image: "assets/Ski2026a1.jpeg",
-        text: "Am 19.03 war es so weit: Die gesamte 10. Stufe traf sich gegen 20 Uhr vor der Schule. Nachdem sich die Schüler und Schülerinnen von ihren Eltern verabschiedet hatten und der Bus fertig beladen war, ging es endlich los – 14 Stunden Abenteuer lagen vor uns.  Nach etwa 3 Stunden Fahrt, machten wir  an…",
-        link: "article1.html",
-        date: "19.03.2026"
-    },
-    {
-        title: "Von klugen Ideen und Kegelstößen – unsere SV Fahrt",
-        id: "svfahrt",
-        image: "assets/SV-Fahrt.jpg",
-        text: "Am 18. März startete eine kleine Abordnung der SV in Richtung Köln Riehl. Überraschenderweise kam, trotz des Streiks der deutschen Bahn, pünktlich um 8 Uhr unser Zug und brachte uns bis Mülheim. Von dort aus liefen wir ca. eine halbe Stunde bis zu unsererem Heim für die nächsten paar Tage…",
-        link: "article2.html",
-        date: "18.03.2026"
-    },
-    {
-        title: "5B auf der Lit.kid.Cologne!",
-        id: "litkid5b",
-        image: "assets/litkid_5b.jpg",
-        text: "Am 9. März 2026 sind wir, die Klasse 5b, mit unseren Klassenlehrer:innen Frau Sulski und Herrn Bänsch zu einer Lesung der lit.kid.COLOGNE gefahren. Die lit.kid.COLOGNE gehört zur lit.COLOGNE. Das ist ein Lesefest für jung und alt mit vielen Lesungen von morgens bis abends. Wir sind in die Lesung „Kennst du…",
-        link: "article3.html",
-        date: "09.03.2026"
-    },
-    {
-        title: "„Was einmal passiert ist, kann sich wiederholen.“  - Gedenkstättenfahrt des NCG nach Oświęcim und Krakau ",
-        id: "auschwitzfahrt",
-        image: "assets/AuschwitzfahrtTitelbild.jpg",
-        text: "Im Rahmen des in diesem Jahr erstmalig stattfindenden Projektkurses Deutsch-Geschichte „Gegen das Vergessen“, welcher sich seit den Sommerferien mit Antisemitismus und dem Holocaust beschäftigt, fuhren wir vom 21. bis zum 26. März nach Polen.  In unserem Projektkurs hatten wir uns zuvor intensiv mit der NS-Zeit beschäftigt. Dabei beleuchteten wir sowohl die Perspektive der Opfer als auch…",
-        link: "article4.html",
-        date: "04.05.2026"
-    },
-];
+let articles = [];
+const ADMIN_HASH = "#Admin234987s20873kl29820";
+const isAdmin = window.location.hash === ADMIN_HASH;
 
-const container = document.getElementById("articlesContainer");
+async function loadArticlesData() {
+    let saved = localStorage.getItem("articles");
+    if (saved) {
+        articles = JSON.parse(saved);
+        return articles;
+    }
 
-articles.forEach(article => {
-    const card = document.createElement("div");
-    card.classList.add("articleCard");
+    try {
+        const response = await fetch('/articles.json');
+        if (!response.ok) throw new Error();
+        articles = await response.json();
+        localStorage.setItem("articles", JSON.stringify(articles));
+        return articles;
+    } catch (e) {
+        articles = [];
+        return articles;
+    }
+}
 
-    card.innerHTML = `
-    <img src="${article.image}" alt="${article.title}">
-    <div class="articleContent">
-        <h3>${article.title}</h3>
-        <p>${article.text.substring(0, 100)}...</p>
-        <a class="readBtn" href="Seiten/UeberUns/artikelTemplate.html?id=${article.id}">Lesen</a>
-    </div>
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadArticlesData();
 
-    <span class="articleDate">${article.date}</span>
-`;
+    initProgressBar();
 
-    container.appendChild(card);
+    const container = document.getElementById("articlesContainer");
+    const articleTitle = document.getElementById("articleTitle");
+
+    if (container) {
+        renderArticleList(articles);
+    } else if (articleTitle) {
+        renderSingleArticle(articles);
+        if (isAdmin) initAdminMode(articles);
+    }
 });
+
+function initProgressBar() {
+    window.addEventListener("scroll", () => {
+        const bar = document.getElementById("progressBar");
+        if (!bar) return;
+        const scrollTop = document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (scrollTop / scrollHeight) * 100 + "%";
+    });
+}
+
+function renderArticleList(data) {
+    const container = document.getElementById("articlesContainer");
+    if (!container) return;
+    container.innerHTML = "";
+
+    const pathPrefix = window.location.pathname.includes('Seiten') ? '../../' : '';
+
+    data.forEach(article => {
+        const card = document.createElement("div");
+        card.classList.add("articleCard");
+        
+        const cleanImagePath = article.image ? article.image.replace('../../', '') : 'assets/default.jpg';
+
+        card.innerHTML = `
+            <img src="${pathPrefix}${cleanImagePath}" alt="${article.title}">
+            <div class="articleContent">
+                <h3>${article.title}</h3>
+                <p>${article.text.substring(0, 100)}...</p>
+                <a class="readBtn" href="${pathPrefix}Seiten/UeberUns/artikelTemplate.html?id=${article.id}${isAdmin ? ADMIN_HASH : ''}">Lesen</a>
+            </div>
+            <span class="articleDate">${article.date}</span>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function renderSingleArticle(data) {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const article = data.find(a => a.id === id);
+
+    if (!article) {
+        document.body.innerHTML = "<h1>Artikel nicht gefunden</h1>";
+        return;
+    }
+
+    const titleEl = document.getElementById("articleTitle");
+    const imageEl = document.getElementById("articleImage");
+    const dateEl = document.getElementById("articleDate");
+    const contentEl = document.getElementById("articleContent");
+
+    if (titleEl) titleEl.textContent = article.title;
+    if (imageEl) imageEl.src = article.image;
+    if (dateEl) dateEl.textContent = article.date;
+    if (contentEl) {
+        contentEl.innerHTML = `<p>${article.text.replace(/\n/g, "</p><p>")}</p>`;
+    }
+
+    const photoGrid = document.getElementById("photoGrid");
+    if (photoGrid && article.photos && article.photos.length > 0) {
+        photoGrid.innerHTML = article.photos.map((src, index) => `
+            <img src="${src}" class="article-photo" onclick="openPhotoViewer(${JSON.stringify(article.photos)}, ${index})" />
+        `).join("");
+    }
+}
+
+async function createArticle() {
+    const current = await loadArticlesData();
+    const newId = "news-" + Date.now();
+    
+    const newArticle = {
+        title: "Klicken zum Bearbeiten des Titels",
+        id: newId,
+        image: "../../assets/default.jpg",
+        text: "Klicken zum Bearbeiten des Inhalts...",
+        date: new Date().toLocaleDateString("de-DE"),
+        photos: []
+    };
+
+    current.push(newArticle);
+    localStorage.setItem("articles", JSON.stringify(current));
+    
+    const isInsideSubfolder = window.location.pathname.includes('Seiten');
+    const redirectPath = isInsideSubfolder ? 'UeberUns/artikelTemplate.html' : 'Seiten/UeberUns/artikelTemplate.html';
+    
+    window.location.href = `${redirectPath}?id=${newId}${ADMIN_HASH}`;
+}
+
+function initAdminMode(data) {
+    const adminBar = document.getElementById("adminBar");
+    const editBtn = document.getElementById("editBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const title = document.getElementById("articleTitle");
+    const content = document.getElementById("articleContent");
+
+    if (adminBar) adminBar.classList.remove("hidden");
+
+    editBtn?.addEventListener("click", () => {
+        title.contentEditable = true;
+        content.contentEditable = true;
+        title.classList.add("editable");
+        content.classList.add("editable");
+        title.focus();
+    });
+
+    saveBtn?.addEventListener("click", () => {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        
+        const index = data.findIndex(a => a.id === id);
+        
+        if (index !== -1) {
+            data[index].title = title.innerText.trim();
+            data[index].text = content.innerText.trim();
+            
+            localStorage.setItem("articles", JSON.stringify(data));
+            
+            title.contentEditable = false;
+            content.contentEditable = false;
+            title.classList.remove("editable");
+            content.classList.remove("editable");
+            
+            alert("Änderungen erfolgreich gespeichert!");
+            location.reload();
+        }
+    });
+}
+
+window.openPhotoViewer = (images, startIndex) => {
+    let current = startIndex;
+    const viewer = document.getElementById("viewer");
+    const viewerImg = document.getElementById("viewerImg");
+
+    if (!viewer || !viewerImg) return;
+
+    const update = () => {
+        viewerImg.src = images[current];
+        viewer.style.display = "flex";
+    };
+
+    window.nextImage = () => { current = (current + 1) % images.length; update(); };
+    window.prevImage = () => { current = (current - 1 + images.length) % images.length; update(); };
+    
+    update();
+};

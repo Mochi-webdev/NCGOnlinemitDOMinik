@@ -101,3 +101,53 @@
 .article-photo:hover {
     transform: scale(1.03);
 }
+.adminBar {
+    position: fixed;
+    top: 75px;
+    left: 0;
+    right: 0;
+
+    background: none;
+    color: white;
+
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+
+    z-index: 9999;
+}
+
+.hidden {
+    display: none;
+}
+
+.editable {
+    outline: 2px dashed #4CAF50;
+    padding: 5px;
+}
+
+#editBtn {
+    display: inline-block;
+  padding: 10px 20px;
+
+  background: #c71b1b;
+  color: white;
+  text-decoration: none;
+
+  border-radius: 5px;
+  transition: 0.2s ease;
+  border: none;
+}
+
+#saveBtn {
+  display: inline-block;
+  padding: 10px 20px;
+
+  background: #c71b1b;
+  color: white;
+  text-decoration: none;
+
+  border-radius: 5px;
+  transition: 0.2s ease;
+  border: none;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCG BGL | Admin Dashboard</title>
+    <link rel="stylesheet" href="../../css/mainStyle.css">
+    <link rel="stylesheet" href="../AdminCss/Dashboard.css">
+    <link rel="stylesheet" href="../../css/ArticleStyleSheetSection.css">
+    <script src="../../ts/menu.js"></script>
+    <script src="../../ts/Articles.js" defer></script>
+   
+</head>
+
+<body>
+    <div id="menu-container"></div>
+    <h1 class="Admin Titel">Admin Dashboard - Alle Artikel</h1>
+
+    <section class="articles" id="articlesContainer"></section>
+
+    <div class="adminEditor">
+
+        <h2>Create Article</h2>
+
+        <input id="titleInput" placeholder="Title">
+        <input id="idInput" placeholder="ID (e.g. ski2026)">
+        <input id="imageInput" placeholder="Image path (assets/img.jpg)">
+        <input id="dateInput" placeholder="Date (e.g. 06.05.2026)">
+
+        <textarea id="textInput" placeholder="Article text..."></textarea>
+
+        <button onclick="createArticle()">Create Article</button>
+
+    </div>
+
+</body>
+
+</html>
