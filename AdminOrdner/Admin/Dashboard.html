@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../../css/ArticleStyleSheetSection.css">
     <script src="../../ts/menu.js"></script>
     <script src="../../ts/Articles.js" defer></script>
-   
+
 </head>
 
 <body>
@@ -25,7 +25,13 @@
 
         <input id="titleInput" placeholder="Title">
         <input id="idInput" placeholder="ID (e.g. ski2026)">
-        <input id="imageInput" placeholder="Image path (assets/img.jpg)">
+        <div class="file-upload-wrapper">
+            <label for="imageUpload">Artikelbild hochladen:</label>
+            <input type="file" id="imageUpload" accept="image/*">
+            <div id="imagePreviewContainer">
+                <img id="imagePreview" src="" style="display:none; max-width: 200px; margin-top: 10px;">
+            </div>
+        </div>
         <input id="dateInput" placeholder="Date (e.g. 06.05.2026)">
 
         <textarea id="textInput" placeholder="Article text..."></textarea>

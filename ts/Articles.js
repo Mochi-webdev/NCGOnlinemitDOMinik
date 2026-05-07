@@ -1,6 +1,6 @@
 let articles = [];
 const ADMIN_HASH = "#Admin234987s20873kl29820";
-const isAdmin = window.location.hash === ADMIN_HASH;
+const isAdmin = window.location.hash.includes(ADMIN_HASH);
 
 async function loadArticlesData() {
     let saved = localStorage.getItem("articles");
@@ -30,10 +30,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     const articleTitle = document.getElementById("articleTitle");
 
     if (container) {
-        renderArticleList(articles);
+        if (container.classList.contains("homepage-preview")) {
+            renderArticleList(articles, 4);
+        } else {
+            renderArticleList(articles);
+        }
     } else if (articleTitle) {
         renderSingleArticle(articles);
         if (isAdmin) initAdminMode(articles);
+    }
+
+    const fileInput = document.getElementById('imageUpload');
+    const imgPreview = document.getElementById('imagePreview');
+    if (fileInput && imgPreview) {
+        fileInput.addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                imgPreview.src = event.target.result;
+                imgPreview.style.display = 'block';
+            }
+            if (e.target.files[0]) {
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
     }
 });
 
@@ -47,21 +66,28 @@ function initProgressBar() {
     });
 }
 
-function renderArticleList(data) {
+function renderArticleList(data, limit = null) {
     const container = document.getElementById("articlesContainer");
     if (!container) return;
     container.innerHTML = "";
 
-    const pathPrefix = window.location.pathname.includes('Seiten') ? '../../' : '';
+    const displayData = limit ? data.slice(0, limit) : data;
+    
+    
+    const isDeepLevel = window.location.pathname.toLowerCase().includes('/seiten/');
+    const pathPrefix = isDeepLevel ? '../../' : '';
 
-    data.forEach(article => {
+    displayData.forEach(article => {
         const card = document.createElement("div");
         card.classList.add("articleCard");
         
-        const cleanImagePath = article.image ? article.image.replace('../../', '') : 'assets/default.jpg';
+        const isBase64 = article.image && article.image.startsWith('data:image');
+     
+        const cleanImageSrc = article.image.replace(/^(\.\.\/)+/, '');
+        const finalSrc = isBase64 ? article.image : `${pathPrefix}${cleanImageSrc}`;
 
         card.innerHTML = `
-            <img src="${pathPrefix}${cleanImagePath}" alt="${article.title}">
+            <img src="${finalSrc}" alt="${article.title}">
             <div class="articleContent">
                 <h3>${article.title}</h3>
                 <p>${article.text.substring(0, 100)}...</p>
@@ -89,7 +115,15 @@ function renderSingleArticle(data) {
     const contentEl = document.getElementById("articleContent");
 
     if (titleEl) titleEl.textContent = article.title;
-    if (imageEl) imageEl.src = article.image;
+    if (imageEl) {
+        // Ensure single article view also handles relative paths correctly
+        const isBase64 = article.image && article.image.startsWith('data:image');
+        const isDeepLevel = window.location.pathname.toLowerCase().includes('/seiten/');
+        const pathPrefix = isDeepLevel ? '../../' : '';
+        const cleanImageSrc = article.image.replace(/^(\.\.\/)+/, '');
+        
+        imageEl.src = isBase64 ? article.image : `${pathPrefix}${cleanImageSrc}`;
+    }
     if (dateEl) dateEl.textContent = article.date;
     if (contentEl) {
         contentEl.innerHTML = `<p>${article.text.replace(/\n/g, "</p><p>")}</p>`;
@@ -97,60 +131,73 @@ function renderSingleArticle(data) {
 
     const photoGrid = document.getElementById("photoGrid");
     if (photoGrid && article.photos && article.photos.length > 0) {
-        photoGrid.innerHTML = article.photos.map((src, index) => `
-            <img src="${src}" class="article-photo" onclick="openPhotoViewer(${JSON.stringify(article.photos)}, ${index})" />
-        `).join("");
+        photoGrid.innerHTML = article.photos.map((src, index) => {
+            const cleanPhotoSrc = src.replace(/^(\.\.\/)+/, '');
+            const isDeep = window.location.pathname.toLowerCase().includes('/seiten/');
+            const pfx = isDeep ? '../../' : '';
+            const finalPhotoSrc = src.startsWith('data:image') ? src : `${pfx}${cleanPhotoSrc}`;
+            
+            return `<img src="${finalPhotoSrc}" class="article-photo" onclick="openPhotoViewer(${JSON.stringify(article.photos)}, ${index})" />`;
+        }).join("");
     }
 }
 
 async function createArticle() {
-   
     const current = await loadArticlesData();
 
-   
     const titleVal = document.getElementById("titleInput").value.trim();
     const idVal = document.getElementById("idInput").value.trim();
-    const imageVal = document.getElementById("imageInput").value.trim();
     const dateVal = document.getElementById("dateInput").value.trim();
     const textVal = document.getElementById("textInput").value.trim();
+    const fileInput = document.getElementById("imageUpload");
 
-   
     if (!titleVal || !idVal) {
         alert("Bitte mindestens Titel und ID eingeben!");
         return;
     }
 
-  
+    if (current.some(a => a.id === idVal)) {
+        alert("Diese ID existiert bereits!");
+        return;
+    }
+
+    let imageData = "assets/default.jpg";
+
+    if (fileInput.files && fileInput.files[0]) {
+        try {
+            imageData = await getBase64(fileInput.files[0]);
+        } catch (error) {
+            console.error(error);
+            alert("Fehler beim Verarbeiten des Bildes.");
+            return;
+        }
+    }
+
     const newArticle = {
         title: titleVal,
         id: idVal,
-        image: imageVal || "../../assets/default.jpg", 
+        image: imageData,
         text: textVal || "Inhalt hier eingeben...",
         date: dateVal || new Date().toLocaleDateString("de-DE"),
         photos: []
     };
 
-  
-    if (current.some(a => a.id === idVal)) {
-        alert("Diese ID existiert bereits! Bitte wähle eine andere.");
-        return;
-    }
-
-
     current.push(newArticle);
     localStorage.setItem("articles", JSON.stringify(current));
     
     alert("Artikel erfolgreich erstellt!");
-
-    document.getElementById("titleInput").value = "";
-    document.getElementById("idInput").value = "";
-    document.getElementById("imageInput").value = "";
-    document.getElementById("dateInput").value = "";
-    document.getElementById("textInput").value = "";
-
-    
-    renderArticleList(current);
+    location.reload();
 }
+
+function getBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
 function initAdminMode(data) {
     const adminBar = document.getElementById("adminBar");
     const editBtn = document.getElementById("editBtn");
@@ -199,7 +246,12 @@ window.openPhotoViewer = (images, startIndex) => {
     if (!viewer || !viewerImg) return;
 
     const update = () => {
-        viewerImg.src = images[current];
+        const isDeep = window.location.pathname.toLowerCase().includes('/seiten/');
+        const pfx = isDeep ? '../../' : '';
+        const src = images[current];
+        const cleanSrc = src.replace(/^(\.\.\/)+/, '');
+        
+        viewerImg.src = src.startsWith('data:image') ? src : `${pfx}${cleanSrc}`;
         viewer.style.display = "flex";
     };
 
