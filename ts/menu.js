@@ -21,7 +21,7 @@ function initMenu() {
     const sideMenu = document.getElementById("sideMenu");
     const overlay = document.getElementById("overlay");
 
-    console.log(menuButton, sideMenu, overlay); 
+    console.log(menuButton, sideMenu, overlay);
 
     if (!menuButton || !sideMenu || !overlay) {
         console.error("Elements not found after load");
@@ -39,7 +39,18 @@ function initMenu() {
 
     document.querySelectorAll(".menuCategory").forEach(btn => {
         btn.addEventListener("click", () => {
-            btn.parentElement.classList.toggle("open");
+
+            const parent = btn.parentElement;
+
+        
+            document.querySelectorAll(".menuItem.open").forEach(item => {
+                if (item !== parent) {
+                    item.classList.remove("open");
+                }
+            });
+
+          
+            parent.classList.toggle("open");
         });
     });
 }

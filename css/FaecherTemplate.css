@@ -1,0 +1,109 @@
+.subjectHeader {
+    position: relative;
+    text-align: center;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.subjectHeader img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.75);
+}
+
+.subjectHeader h1 {
+    position: absolute;
+    bottom: 20px;
+    left: 30px;
+    color: white;
+    font-size: 3rem;
+    margin: 0;
+}
+
+
+.subjectContent {
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+
+.subjectText h2,
+.teachers h2,
+.curriculum h2 {
+    margin-bottom: 10px;
+    font-size: 1.8rem;
+}
+
+.subjectText p {
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+
+.teachers {
+    background: #f7f7f7;
+    padding: 20px;
+    border-radius: 12px;
+}
+.teacherGroupImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    margin: 15px 0;
+}
+
+
+
+.teachers ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+}
+
+.teachers li {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.curriculum {
+    background: #f7f7f7;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.pdfList {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pdfList li {
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.pdfList li:hover {
+    transform: translateX(5px);
+}
+
+.pdfList a {
+    text-decoration: none;
+    color: #2b5cff;
+    font-weight: 500;
+}

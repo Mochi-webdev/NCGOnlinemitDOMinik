@@ -1,0 +1,28 @@
+.tableWrapper {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.simpleTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.simpleTable th {
+    background: #770a0a;
+    color: white;
+    text-align: left;
+    padding: 12px;
+}
+
+.simpleTable td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.simpleTable tr:hover {
+    background: #f5f5f5;
+}

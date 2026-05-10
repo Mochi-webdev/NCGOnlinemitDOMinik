@@ -1,0 +1,35 @@
+.subjectsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 25px;
+    padding: 30px;
+}
+
+.subjectCard {
+    display: block;
+    text-decoration: none;
+    color: black;
+    border-radius: 16px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.subjectCard img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+}
+
+.subjectCard h3 {
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.subjectCard:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}

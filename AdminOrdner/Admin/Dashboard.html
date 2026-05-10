@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<script>if (localStorage.getItem("isAdmin") !== "true") {
+
+        window.location.href = "/AdminOrdner/login.html";
+
+    }</script>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,6 +46,17 @@
 
     </div>
 
+    <button onclick="logout()">Logout</button>
+
 </body>
+
+<script>
+    function logout() {
+
+        localStorage.removeItem("isAdmin");
+
+        window.location.href = "/index.html";
+
+    }</script>
 
 </html>

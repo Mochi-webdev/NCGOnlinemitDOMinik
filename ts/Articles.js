@@ -116,7 +116,7 @@ function renderSingleArticle(data) {
 
     if (titleEl) titleEl.textContent = article.title;
     if (imageEl) {
-        // Ensure single article view also handles relative paths correctly
+       
         const isBase64 = article.image && article.image.startsWith('data:image');
         const isDeepLevel = window.location.pathname.toLowerCase().includes('/seiten/');
         const pathPrefix = isDeepLevel ? '../../' : '';
