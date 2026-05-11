@@ -1,126 +1,212 @@
-const http = require("http");
-const https = require("https");
-const url = require("url");
+require("dotenv").config();
+
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
 const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
 
 const PORT = process.env.PORT || 3000;
 
+const ADMIN_HASH = process.env.ADMIN_HASH || "Admin234987s20873kl29820";
 
-const sendCorsHeaders = (res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-};
+const ARTICLES_FILE = path.join(__dirname, "components", "articles.json");
 
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+});
 
-const USER = "Luke.Niessen";
-const PASS = "NCG2024!";
-const CLIENT = "NCG";
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/NCGAdmin.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "NCGAdmin.html"));
+});
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.get("/faecher", (req, res) => {
+    res.sendFile(path.join(__dirname, "Seiten", "Unterricht", "FaecherundFachschaften.html"));
+});
+
+app.get("/faecher/biologie", (req, res) => {
+    res.sendFile(path.join(__dirname, "Seiten", "Faecher", "biologie.html"));
+});
+
+app.get("/faecher/chemie", (req, res) => {
+    res.sendFile(path.join(__dirname, "Seiten", "Faecher", "chemie.html"));
+});
+
+app.get("/faecher/deutsch", (req, res) => {
+    res.sendFile(path.join(__dirname, "Seiten", "Faecher", "deutsch.html"));
+});
+
+app.get("/api/articles", (req, res) => {
+    try {
+        if (!fs.existsSync(ARTICLES_FILE)) {
+            return res.json([]);
+        }
+        const data = fs.readFileSync(ARTICLES_FILE, "utf8");
+        res.json(JSON.parse(data));
+    } catch (err) {
+        console.error("Error reading articles:", err);
+        res.status(500).json({ error: "Failed to read articles" });
+    }
+});
+
+app.post("/api/articles", (req, res) => {
+    const { articles, adminHash } = req.body;
+
+    if (adminHash !== ADMIN_HASH) {
+        return res.status(403).json({ error: "Unauthorized: Invalid admin hash" });
+    }
+
+    try {
+        const dir = path.dirname(ARTICLES_FILE);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
+        fs.writeFileSync(ARTICLES_FILE, JSON.stringify(articles, null, 2), "utf8");
+        console.log("✅ Articles updated by admin");
+        res.json({ success: true, message: "Articles saved successfully" });
+    } catch (err) {
+        console.error("Error writing articles:", err);
+        res.status(500).json({ error: "Failed to save articles" });
+    }
+});
+
+const UNTIS_URL = process.env.UNTIS_URL;
+const UNTIS_USER = process.env.UNTIS_USER;
+const UNTIS_PASS = process.env.UNTIS_PASS;
+const UNTIS_CLIENT = process.env.UNTIS_CLIENT || "NCG";
 
 let sessionId = null;
 
-async function login() {
-  const res = await axios.post(
-    "https://api.webuntis.com/WebUntis/jsonrpc.do",
-    {
-      id: "1",
-      method: "authenticate",
-      params: {
-        user: USER,
-        password: PASS,
-        client: CLIENT
-      }
+async function loginToUntis() {
+    try {
+        const response = await axios.post(
+            UNTIS_URL,
+            {
+                id: "1",
+                method: "authenticate",
+                params: {
+                    user: UNTIS_USER,
+                    password: UNTIS_PASS,
+                    client: UNTIS_CLIENT
+                }
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        sessionId = response.data.result.sessionId;
+        console.log("✅ WebUntis login successful");
+    } catch (err) {
+        console.error("❌ WebUntis Login Failed");
+        console.error(err.response?.data || err.message);
     }
-  );
-
-  sessionId = res.data.result.sessionId;
-  console.log("WebUntis logged in");
 }
 
+function getTodayDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return Number(`${year}${month}${day}`);
+}
 
-const server = http.createServer(async (req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-
- 
-  if (req.method === "OPTIONS") {
-    sendCorsHeaders(res);
-    res.writeHead(204);
-    res.end();
-    return;
-  }
-
-
-  if (parsedUrl.pathname === "/proxy") {
-    const target = parsedUrl.query.url;
-
-    if (!target) {
-      res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
-      res.end("Missing url parameter");
-      return;
-    }
-
-    const targetUrl = url.parse(target);
-    const client = targetUrl.protocol === "https:" ? https : http;
-
-    const proxyReq = client.get(target, (proxyRes) => {
-      sendCorsHeaders(res);
-      res.writeHead(proxyRes.statusCode || 502, {
-        "Content-Type": proxyRes.headers["content-type"] || "application/octet-stream"
-      });
-
-      proxyRes.pipe(res);
-    });
-
-    proxyReq.on("error", (err) => {
-      sendCorsHeaders(res);
-      res.writeHead(502, { "Content-Type": "text/plain; charset=utf-8" });
-      res.end("Proxy error: " + err.message);
-    });
-
-    return;
-  }
-
-
-  if (parsedUrl.pathname === "/api/vertretung") {
+app.get("/api/vertretung", async (req, res) => {
     try {
-      sendCorsHeaders(res);
-
-      if (!sessionId) await login();
-
-      const response = await axios.post(
-        "https://api.webuntis.com/WebUntis/jsonrpc.do",
-        {
-          id: "2",
-          method: "getSubstitutions",
-          params: {
-            startDate: 20260506,
-            endDate: 20260506
-          }
-        },
-        {
-          headers: {
-            Cookie: `JSESSIONID=${sessionId}`
-          }
+        if (!sessionId) {
+            await loginToUntis();
         }
-      );
 
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(response.data.result));
+        const today = getTodayDate();
+
+        const response = await axios.post(
+            UNTIS_URL,
+            {
+                id: "2",
+                method: "getSubstitutions",
+                params: {
+                    startDate: today,
+                    endDate: today
+                }
+            },
+            {
+                headers: {
+                    Cookie: `JSESSIONID=${sessionId}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        res.json(response.data.result);
 
     } catch (err) {
-      console.error(err.message);
-      res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
-      res.end("WebUntis error");
+        console.error("❌ Substitution Error");
+        console.error(err.response?.data || err.message);
+
+        if (err.response?.data?.error) {
+            try {
+                console.log("🔄 Re-Logging into WebUntis...");
+                await loginToUntis();
+                res.status(401).json({
+                    error: "Session expired. Retry request."
+                });
+            } catch {
+                res.status(500).json({
+                    error: "WebUntis re-login failed"
+                });
+            }
+        } else {
+            res.status(500).json({
+                error: "Unknown server error"
+            });
+        }
     }
-
-    return;
-  }
-
-  res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-  res.end("Not found");
 });
 
+app.get("/proxy", async (req, res) => {
+    try {
+        const target = req.query.url;
+        if (!target) {
+            return res.status(400).send("Missing URL parameter");
+        }
 
-server.listen(PORT, () => {
-  console.log(`Server läuft auf http://localhost:${PORT}`);
+        const response = await axios.get(target, {
+            responseType: "stream"
+        });
+
+        res.setHeader("Content-Type", response.headers["content-type"]);
+        response.data.pipe(res);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Proxy error");
+    }
+});
+
+app.use(express.static(__dirname));
+
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, "404.html"));
+});
+
+app.listen(PORT, () => {
+    console.log(`
+===================================
+✅ Server running
+🌍 http://localhost:${PORT}
+===================================
+`);
 });

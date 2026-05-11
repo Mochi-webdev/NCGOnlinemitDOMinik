@@ -3,19 +3,20 @@ const ADMIN_HASH = "#Admin234987s20873kl29820";
 const isAdmin = window.location.hash.includes(ADMIN_HASH);
 
 async function loadArticlesData() {
-    let saved = localStorage.getItem("articles");
-    if (saved) {
-        articles = JSON.parse(saved);
-        return articles;
-    }
-
     try {
-        const response = await fetch('/articles.json');
+        const response = await fetch('/api/articles');
         if (!response.ok) throw new Error();
         articles = await response.json();
+        // Cache in localStorage for offline fallback
         localStorage.setItem("articles", JSON.stringify(articles));
         return articles;
     } catch (e) {
+        // Fallback to localStorage if server fails
+        const saved = localStorage.getItem("articles");
+        if (saved) {
+            articles = JSON.parse(saved);
+            return articles;
+        }
         articles = [];
         return articles;
     }
@@ -182,11 +183,33 @@ async function createArticle() {
         photos: []
     };
 
-    current.push(newArticle);
-    localStorage.setItem("articles", JSON.stringify(current));
-    
-    alert("Artikel erfolgreich erstellt!");
-    location.reload();
+    const updatedArticles = [...current, newArticle];
+
+    // Save to server
+    try {
+        const response = await fetch('/api/articles', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                articles: updatedArticles,
+                adminHash: ADMIN_HASH.replace('#', '')
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to save');
+        }
+
+        // Update local cache
+        articles = updatedArticles;
+        localStorage.setItem("articles", JSON.stringify(articles));
+
+        alert("Artikel erfolgreich erstellt!");
+        location.reload();
+    } catch (error) {
+        console.error("Save error:", error);
+        alert("Fehler beim Speichern des Artikels auf dem Server.");
+    }
 }
 
 function getBase64(file) {
@@ -215,25 +238,46 @@ function initAdminMode(data) {
         title.focus();
     });
 
-    saveBtn?.addEventListener("click", () => {
+    saveBtn?.addEventListener("click", async () => {
         const params = new URLSearchParams(window.location.search);
         const id = params.get("id");
-        
+
         const index = data.findIndex(a => a.id === id);
-        
+
         if (index !== -1) {
             data[index].title = title.innerText.trim();
             data[index].text = content.innerText.trim();
-            
-            localStorage.setItem("articles", JSON.stringify(data));
-            
-            title.contentEditable = false;
-            content.contentEditable = false;
-            title.classList.remove("editable");
-            content.classList.remove("editable");
-            
-            alert("Änderungen erfolgreich gespeichert!");
-            location.reload();
+
+            // Save to server
+            try {
+                const response = await fetch('/api/articles', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        articles: data,
+                        adminHash: ADMIN_HASH.replace('#', '')
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save');
+                }
+
+                // Update local cache
+                articles = data;
+                localStorage.setItem("articles", JSON.stringify(data));
+
+                title.contentEditable = false;
+                content.contentEditable = false;
+                title.classList.remove("editable");
+                content.classList.remove("editable");
+
+                alert("Änderungen erfolgreich gespeichert!");
+                location.reload();
+            } catch (error) {
+                console.error("Save error:", error);
+                alert("Fehler beim Speichern auf dem Server.");
+            }
         }
     });
 }
