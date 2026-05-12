@@ -1,0 +1,7 @@
+[data-apos-area] [data-apos-area] {
+  padding: var(--a-widget-margin);
+}
+
+[data-rich-text] p:empty::after {
+  content: '\00A0';
+}
