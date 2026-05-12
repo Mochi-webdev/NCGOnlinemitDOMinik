@@ -47,7 +47,7 @@ app.get("/faecher/deutsch", (req, res) => {
     res.sendFile(path.join(__dirname, "Seiten", "Faecher", "deutsch.html"));
 });
 
-app.get("/api/articles", (req, res) => {
+app.get("/api/articles", async (req, res) => {
     try {
         if (!fs.existsSync(ARTICLES_FILE)) {
             return res.json([]);
@@ -57,6 +57,15 @@ app.get("/api/articles", (req, res) => {
     } catch (err) {
         console.error("Error reading articles:", err);
         res.status(500).json({ error: "Failed to read articles" });
+    }
+});
+
+app.get("/api/cms/articles", async (req, res) => {
+    try {
+        const response = await axios.get('http://localhost:3001/api/v1/articles');
+        res.json(response.data);
+    } catch (err) {
+        res.status(503).json({ error: "CMS not available" });
     }
 });
 

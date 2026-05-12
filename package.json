@@ -1,11 +1,12 @@
 {
   "name": "ncg-website",
   "version": "1.0.0",
-  "description": "NCG Website with Express backend",
+  "description": "NCG Website with Express backend and ApostropheCMS",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "cms": "node apos/server.js"
   },
   "dependencies": {
     "apostrophe": "^4.29.0",

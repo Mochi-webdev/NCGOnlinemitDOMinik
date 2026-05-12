@@ -1,0 +1,5 @@
+{
+  "name": "apostrophe-articles",
+  "label": "Artikel",
+  "extend": "apostrophe-pieces"
+}
