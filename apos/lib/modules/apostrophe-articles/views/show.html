@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block main %}
+  <div class="article-show">
+    <h1>{{ data.piece.title }}</h1>
+    <p class="date">{{ data.piece.date }}</p>
+    {% if data.piece.image %}
+      <div class="lead-image">
+        <img src="{{ data.piece.image }}" alt="{{ data.piece.title }}" />
+      </div>
+    {% endif %}
+    <div class="body">
+      {{ data.piece.body | replace('\n', '<br>') | safe }}
+    </div>
+    {% if data.piece.photos and data.piece.photos.length %}
+      <div class="photos">
+        <h2>Mehr Bilder</h2>
+        <div class="photo-grid">
+          {% for photo in data.piece.photos %}
+            <div class="photo-item">
+              <img src="{{ photo.url }}" alt="" />
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

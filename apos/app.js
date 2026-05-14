@@ -1,10 +1,23 @@
 require("dotenv").config();
 
+const cors = require('cors');
+const express = require('express');
+
 const apostrophe = require('apostrophe')({
   shortName: 'ncg-website',
   baseUrl: process.env.BASE_URL || 'http://localhost:3001',
   modules: {
-    'apostrophe-express': {},
+    'apostrophe-express': {
+      middlewares: {
+        add: [
+          { middleware: cors({ origin: ['http://localhost:3000', process.env.BASE_URL || 'http://localhost:3001'] }) },
+          { 
+            middleware: express.json(),
+            perMethod: { before: ['get', 'post', 'put', 'delete'] }
+          }
+        ]
+      }
+    },
     'apostrophe-assets': {},
     'apostrophe-templates': {},
     'apostrophe-pages': {},
@@ -18,35 +31,7 @@ const apostrophe = require('apostrophe')({
     'apostrophe-pieces': {},
     'apostrophe-schemas': {},
     'apostrophe-login': {},
-    'apostrophe-articles': {
-      extend: 'apostrophe-pieces',
-      name: 'article',
-      label: 'Artikel',
-      pluralLabel: 'Artikel',
-      addFields: [
-        {
-          name: 'date',
-          type: 'string',
-          label: 'Datum'
-        },
-        {
-          name: 'photos',
-          type: 'array',
-          titleField: true,
-          fields: {
-            add: {
-              name: 'photo',
-              type: 'area',
-              options: {
-                widgets: {
-                  'apostrophe-images': {}
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
+    'apostrophe-articles': {},
     'apostrophe-articles-pages': {
       extend: 'apostrophe-pieces-pages',
       label: 'Artikel-Seite'

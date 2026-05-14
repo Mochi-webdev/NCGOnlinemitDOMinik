@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "cms": "node apos/server.js"
+    "cms": "node apos/server.js",
+    "migrate": "node scripts/migrate-articles.js"
   },
   "dependencies": {
     "apostrophe": "^4.29.0",

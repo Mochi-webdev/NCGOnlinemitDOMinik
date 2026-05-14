@@ -2,11 +2,17 @@ let articles = [];
 const ADMIN_HASH = "#Admin234987s20873kl29820";
 const isAdmin = window.location.hash.includes(ADMIN_HASH);
 
-const TEMPLATE_PATH = "/Seiten/UeberUns/artikelTemplate.html";
+const TEMPLATE_PATH = "/Seiten/UeberUns/ArtikelTemplate.html";
 const API_ENDPOINT = "/api/articles";
 
 async function loadArticlesData() {
-    
+    // Check if we're on an article detail page with injected data
+    if (window.ARTICLE_DATA) {
+        articles = [window.ARTICLE_DATA];
+        localStorage.setItem("articles", JSON.stringify(articles));
+        return articles;
+    }
+
     const saved = localStorage.getItem("articles");
     let localArticles = saved ? JSON.parse(saved) : [];
 
@@ -69,12 +75,19 @@ function renderArticleList(data, limit = null) {
         const card = document.createElement("div");
         card.classList.add("articleCard");
         
-        const isBase64 = article.image && article.image.startsWith('data:image');
-        const cleanImageSrc = article.image.replace(/^(\.\.\/)+/, '');
-        const finalSrc = isBase64 ? article.image : `/${cleanImageSrc}`;
+        let imageSrc = article.image || 'assets/default.jpg';
+        
+        // Normalize image URL
+        if (imageSrc.startsWith('data:image') || imageSrc.startsWith('http://') || imageSrc.startsWith('https://')) {
+            // Use as is
+        } else {
+            let clean = imageSrc.replace(/^(\.\.\/)+/, '');
+            if (!clean.startsWith('/')) clean = '/' + clean;
+            imageSrc = clean;
+        }
 
         card.innerHTML = `
-            <img src="${finalSrc}" alt="${article.title}">
+            <img src="${imageSrc}" alt="${article.title}">
             <div class="articleContent">
                 <h3>${article.title}</h3>
                 <p>${article.text.substring(0, 100)}...</p>
@@ -95,6 +108,42 @@ function renderSingleArticle(data) {
         document.body.innerHTML = "<h1>Artikel nicht gefunden</h1>";
         return;
     }
+
+    const titleEl = document.getElementById("articleTitle");
+    const imageEl = document.getElementById("articleImage");
+    const dateEl = document.getElementById("articleDate");
+    const contentEl = document.getElementById("articleContent");
+
+    if (titleEl) titleEl.textContent = article.title;
+    if (imageEl) {
+        let imageSrc = article.image || 'assets/default.jpg';
+        if (imageSrc.startsWith('data:image') || imageSrc.startsWith('http://') || imageSrc.startsWith('https://')) {
+            // use as is
+        } else {
+            let clean = imageSrc.replace(/^(\.\.\/)+/, '');
+            if (!clean.startsWith('/')) clean = '/' + clean;
+            imageSrc = clean;
+        }
+        imageEl.src = imageSrc;
+    }
+    if (dateEl) dateEl.textContent = article.date;
+    if (contentEl) {
+        contentEl.innerHTML = `<p>${article.text.replace(/\n/g, "</p><p>")}</p>`;
+    }
+
+    const photoGrid = document.getElementById("photoGrid");
+    if (photoGrid && article.photos && article.photos.length > 0) {
+        photoGrid.innerHTML = article.photos.map((src, index) => {
+            let photoSrc = src;
+            if (!photoSrc.startsWith('data:image') && !photoSrc.startsWith('http://') && !photoSrc.startsWith('https://')) {
+                let clean = photoSrc.replace(/^(\.\.\/)+/, '');
+                if (!clean.startsWith('/')) clean = '/' + clean;
+                photoSrc = clean;
+            }
+            return `<img src="${photoSrc}" class="article-photo" onclick="openPhotoViewer(${JSON.stringify(article.photos)}, ${index})" />`;
+        }).join("");
+    }
+}
 
     const titleEl = document.getElementById("articleTitle");
     const imageEl = document.getElementById("articleImage");
@@ -226,10 +275,18 @@ window.openPhotoViewer = (images, startIndex) => {
     const viewerImg = document.getElementById("viewerImg");
 
     const update = () => {
-        const src = images[current];
-        const isBase64 = src.startsWith('data:image');
-        const cleanSrc = src.replace(/^(\.\.\/)+/, '');
-        viewerImg.src = isBase64 ? src : `/${cleanSrc}`;
+        let src = images[current];
+        if (!src) return;
+        
+        if (src.startsWith('data:image') || src.startsWith('http://') || src.startsWith('https://')) {
+            // Use as is
+        } else {
+            let clean = src.replace(/^(\.\.\/)+/, '');
+            if (!clean.startsWith('/')) clean = '/' + clean;
+            src = clean;
+        }
+        
+        viewerImg.src = src;
         viewer.style.display = "flex";
     };
 
